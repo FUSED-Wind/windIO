@@ -1,6 +1,18 @@
 # windIO
 A python library to write inputs / output files
 
+# Running the tests
+You can use [py.test](http://pytest.org/latest/):
+
+```bash
+  $ py.test
+```
+
+Or even better [tox](https://testrun.org/tox/latest/):
+```bash
+  $ tox
+```
+
 # Classes
 ## WTLayout
 Defines a wind turbine layout.
@@ -11,14 +23,7 @@ turbines:
     name: T1
     position: [0.0, 0.0]
     type: Type1
-  t2:
-    name: T2
-    position: [1000.0, 0.0]
-    type: Type1
-  t3:
-    name: T3
-    position: [1000.0, 1000.0]
-    type: Type1
+  ...
   t4:
     name: T4
     position: [0.0, 1000.0]
