@@ -55,3 +55,10 @@ class TestWindTurbineLayout:
         with pytest.raises(Exception) as keyinfo:
             self.wt_layout.check_structure(data)
         assert "turbine: t1 doesn't have a defined position" in str(keyinfo.value)
+
+    def test_check_turbine_type_structure(self):
+        data = self.wt_layout.data
+        data['turbine_types']['Type1']['rotor_diamter'] =  90.0
+        with pytest.raises(KeyError) as keyinfo:
+            self.wt_layout.check_structure(data)
+        assert 'not recognized' in str(keyinfo.value)

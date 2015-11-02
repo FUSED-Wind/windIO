@@ -34,7 +34,7 @@ class WTLayout(object):
         base = ['turbines', 'turbine_types']
         for k, v in data.items():
             if not k in base:
-                raise KeyError('key: {0} not recognized'.format(k))
+                raise KeyError('key: {0} not recognized. It should be one of those keys {1}'.format(k, base))
 
         # Check for all turbines to have a defined type
         for k, v in data['turbines'].items():
@@ -48,3 +48,18 @@ class WTLayout(object):
         for k, v in data['turbines'].items():
             if 'position' not in v:
                 raise Exception("turbine: {0} doesn't have a defined position".format(k))
+
+        # Check the turbine definition structure
+        type_base = ['hub_height',
+                     'rotor_diameter',
+                     'rated_power',
+                     'cut_in_wind_speed',
+                     'cut_out_wind_speed',
+                     'rated_wind_speed',
+                     'air_density',
+                     'power_curve',
+                     'c_t_curve']
+        for k, v in data['turbine_types'].items():
+            for k2 in v.keys():
+                if k2 not in type_base:
+                    raise KeyError('key: {0} not recognized. It should be one of those keys {1}'.format(k2, type_base))
