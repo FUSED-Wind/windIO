@@ -10,5 +10,6 @@ setup(name='windIO',
       packages=['windIO'],
       install_requires=[
         'pyyaml',
+        'numpy',
       ],
       zip_safe=False)

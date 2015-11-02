@@ -4,6 +4,7 @@
 #
 
 import yaml
+import numpy as np
 
 class WTLayout(object):
     def __init__(self, filename):
@@ -19,3 +20,11 @@ class WTLayout(object):
 
     def __setitem__(self, a, b):
         self.data[a] = b
+
+    @property
+    def wt_list(self):
+        return [self.data['turbines'][wtn] for wtn in self.wt_names]
+
+    @property
+    def positions(self):
+        return np.array([wt['position'] for wt in self.wt_list])
