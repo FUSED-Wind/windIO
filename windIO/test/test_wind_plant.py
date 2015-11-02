@@ -24,6 +24,7 @@ class TestWindTurbineLayout:
         # Get item is the same as data
         assert wt_layout['turbines']['t1']['name'] == wt_layout.data['turbines']['t1']['name']
 
+        # Test the positions property
         np.testing.assert_array_almost_equal(
             wt_layout.positions,
             np.array([[0.0, 0.0],
