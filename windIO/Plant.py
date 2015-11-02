@@ -14,6 +14,7 @@ class WTLayout(object):
         self.wt_names = list(data['turbines'].keys())
         self.wt_names.sort()
         self.data = data
+        # Check that the data is correctly organized
         self.check_structure(data)
 
     def __getitem__(self, a):
@@ -31,7 +32,15 @@ class WTLayout(object):
         return np.array([wt['position'] for wt in self.wt_list])
 
     def check_structure(self, data):
-        base = ['turbines', 'turbine_types']
+        """Check that the data is conform to the standard
+        Parameters
+        ----------
+        data:   dictionary
+                The data to check
+        """
+
+        # Check that all the keys are defined in the base
+        base = ['turbines', 'transformers', 'metmasts', 'turbine_types']
         for k, v in data.items():
             if not k in base:
                 raise KeyError('key: {0} not recognized. It should be one of those keys {1}'.format(k, base))
@@ -49,7 +58,7 @@ class WTLayout(object):
             if 'position' not in v:
                 raise Exception("turbine: {0} doesn't have a defined position".format(k))
 
-        # Check the turbine definition structure
+        # Check the turbine type definition structure
         type_base = ['hub_height',
                      'rotor_diameter',
                      'rated_power',
