@@ -8,4 +8,7 @@ setup(name='windIO',
       author_email='pire@dtu.dk',
       license='Apache 2.0',
       packages=['windIO'],
+      install_requires=[
+        'pyyaml',
+      ],
       zip_safe=False)

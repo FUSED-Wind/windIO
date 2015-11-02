@@ -1,0 +1,259 @@
+turbines:
+  A-01:
+    name: A-01
+    position: [361469, 6154542]
+    type: SWP2.3MW
+  A-02:
+    name: A-02
+    position: [361202, 6154244]
+    type: SWP2.3MW
+  A-03:
+    name: A-03
+    position: [360936, 6153946]
+    type: SWP2.3MW
+  A-04:
+    name: A-04
+    position: [360670, 6153647]
+    type: SWP2.3MW
+  A-05:
+    name: A-05
+    position: [360403, 6153349]
+    type: SWP2.3MW
+  A-06:
+    name: A-06
+    position: [360137, 6153050]
+    type: SWP2.3MW
+  A-07:
+    name: A-07
+    position: [359870, 6152752]
+    type: SWP2.3MW
+  B-01:
+    name: B-01
+    position: [361202, 6154694]
+    type: SWP2.3MW
+  B-02:
+    name: B-02
+    position: [360936, 6154396]
+    type: SWP2.3MW
+  B-03:
+    name: B-03
+    position: [360670, 6154098]
+    type: SWP2.3MW
+  B-04:
+    name: B-04
+    position: [360403, 6153799]
+    type: SWP2.3MW
+  B-05:
+    name: B-05
+    position: [360137, 6153501]
+    type: SWP2.3MW
+  B-06:
+    name: B-06
+    position: [359870, 6153203]
+    type: SWP2.3MW
+  B-07:
+    name: B-07
+    position: [359604, 6152904]
+    type: SWP2.3MW
+  B-08:
+    name: B-08
+    position: [359337, 6152606]
+    type: SWP2.3MW
+  C-01:
+    name: C-01
+    position: [360936, 6154846]
+    type: SWP2.3MW
+  C-02:
+    name: C-02
+    position: [360670, 6154548]
+    type: SWP2.3MW
+  C-03:
+    name: C-03
+    position: [360403, 6154250]
+    type: SWP2.3MW
+  C-04:
+    name: C-04
+    position: [360137, 6153951]
+    type: SWP2.3MW
+  C-05:
+    name: C-05
+    position: [359870, 6153653]
+    type: SWP2.3MW
+  C-06:
+    name: C-06
+    position: [359604, 6153355]
+    type: SWP2.3MW
+  C-07:
+    name: C-07
+    position: [359337, 6153056]
+    type: SWP2.3MW
+  C-08:
+    name: C-08
+    position: [359071, 6152758]
+    type: SWP2.3MW
+  D-01:
+    name: D-01
+    position: [360670, 6154998]
+    type: SWP2.3MW
+  D-02:
+    name: D-02
+    position: [360403, 6154700]
+    type: SWP2.3MW
+  D-03:
+    name: D-03
+    position: [360137, 6154402]
+    type: SWP2.3MW
+  D-04:
+    name: D-04
+    position: [359870, 6154103]
+    type: SWP2.3MW
+  D-06:
+    name: D-06
+    position: [359337, 6153507]
+    type: SWP2.3MW
+  D-07:
+    name: D-07
+    position: [359071, 6153208]
+    type: SWP2.3MW
+  D-08:
+    name: D-08
+    position: [358805, 6152910]
+    type: SWP2.3MW
+  E-01:
+    name: E-01
+    position: [360390, 6155136]
+    type: SWP2.3MW
+  E-02:
+    name: E-02
+    position: [360137, 6154852]
+    type: SWP2.3MW
+  E-03:
+    name: E-03
+    position: [359870, 6154554]
+    type: SWP2.3MW
+  E-04:
+    name: E-04
+    position: [359604, 6154255]
+    type: SWP2.3MW
+  E-06:
+    name: E-06
+    position: [359071, 6153659]
+    type: SWP2.3MW
+  E-07:
+    name: E-07
+    position: [358805, 6153360]
+    type: SWP2.3MW
+  F-02:
+    name: F-02
+    position: [359870, 6155004]
+    type: SWP2.3MW
+  F-03:
+    name: F-03
+    position: [359604, 6154706]
+    type: SWP2.3MW
+  F-04:
+    name: F-04
+    position: [359337, 6154407]
+    type: SWP2.3MW
+  F-05:
+    name: F-05
+    position: [359071, 6154109]
+    type: SWP2.3MW
+  F-06:
+    name: F-06
+    position: [358805, 6153811]
+    type: SWP2.3MW
+  G-02:
+    name: G-02
+    position: [359604, 6155156]
+    type: SWP2.3MW
+  G-03:
+    name: G-03
+    position: [359337, 6154858]
+    type: SWP2.3MW
+  G-04:
+    name: G-04
+    position: [359071, 6154560]
+    type: SWP2.3MW
+  G-05:
+    name: G-05
+    position: [358805, 6154261]
+    type: SWP2.3MW
+  H-02:
+    name: H-02
+    position: [359337, 6155308]
+    type: SWP2.3MW
+  H-03:
+    name: H-03
+    position: [359071, 6155010]
+    type: SWP2.3MW
+  H-04:
+    name: H-04
+    position: [358805, 6154712]
+    type: SWP2.3MW
+transformers:
+  W-01:
+    name: W-01
+    position: [361735, 6154841]
+metmasts:
+  p2:
+    name: Mast-p2
+    position: [358851, 6152678]
+turbine_types:
+  SWP2.3MW:
+     hub_height: 65.0
+     rotor_diameter: 92.6
+     rated_power: 2300.0
+     cut_in_wind_speed: 4.0
+     cut_out_wind_speed: 25.0
+     rated_wind_speed: 14.0
+     air_density: 1.225
+     power_curve:
+        - [3.0,     0.0]
+        - [4.0,    65.0]
+        - [5.0,   180.0]
+        - [6.0,   352.0]
+        - [7.0,   590.0]
+        - [8.0,   906.0]
+        - [9.0,  1308.0]
+        - [10.0, 1767.0]
+        - [11.0, 2085.0]
+        - [12.0, 2234.0]
+        - [13.0, 2283.0]
+        - [14.0, 2296.0]
+        - [15.0, 2299.0]
+        - [16.0, 2300.0]
+        - [17.0, 2300.0]
+        - [18.0, 2300.0]
+        - [19.0, 2300.0]
+        - [20.0, 2300.0]
+        - [21.0, 2300.0]
+        - [22.0, 2300.0]
+        - [23.0, 2300.0]
+        - [24.0, 2300.0]
+        - [25.0, 2300.0]
+     c_t_curve:
+        - [3.0,  0.00]
+        - [4.0,  0.81]
+        - [5.0,  0.84]
+        - [6.0,  0.83]
+        - [7.0,  0.85]
+        - [8.0,  0.86]
+        - [9.0,  0.87]
+        - [10.0, 0.79]
+        - [11.0, 0.67]
+        - [12.0, 0.45]
+        - [13.0, 0.34]
+        - [14.0, 0.26]
+        - [15.0, 0.21]
+        - [16.0, 0.17]
+        - [17.0, 0.14]
+        - [18.0, 0.12]
+        - [19.0, 0.10]
+        - [20.0, 0.09]
+        - [21.0, 0.07]
+        - [22.0, 0.07]
+        - [23.0, 0.06]
+        - [24.0, 0.05]
+        - [25.0, 0.05]
+
