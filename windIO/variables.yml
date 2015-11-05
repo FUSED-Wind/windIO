@@ -210,30 +210,255 @@ hub:
     max: 200.0
     units: m/s
 
+material_cost:
+
+
+material:
+  name:
+    class: str
+    desc: The material name
+
+  density:
+    min: 0.0
+    desc: The material density
+    units: kg/m**3
+
+  cost_per_mass:
+    class: float
+    desc: The cost per mass
+    min: 0.0
+    units: USD/kg
+
+  volume:
+    class: float
+    desc: the material volume
+
+  mass:
+    class: float
+    desc: the total component mass
+    units: kg
+    min: 0.0
+    expr: volume * density
+
+  cost:
+    class: float
+    desc: the material cost
+    min: 0.0
+    expr: mass * cost_per_mass
+
+steel:
+  extends: material
+  name: steel
+  density: 7.850e3
+  cost_per_mass: 100 # USD/kg
+
+component:
+  name:
+    class: str
+    desc: the component name
+
+  materials: [material] # Used if there are several materials
+  material: material # Used if there is only on material
+
+  cost:
+    material:
+      class: float
+      desc: The total cost per mass
+      expr: material:mass * material:cost_per_mass
+        #sum([m.mass * m.cost_per_mass for m in materials])
+      min: 0.0
+
+    installation:
+      class: float
+      desc: The installation cost of the component
+      min: 0.0
+
+    replacement:
+      class: float
+      desc: The maintenance cost to replace the component
+      min: 0.0
+
+    manufacturing:
+      class: float
+      desc: The manufacturing cost of the component
+      min: 0.0
+
+    total:
+      class: float
+      desc: The total cost per mass
+      expr: material + installation + manufacturing
+      min: 0.0
+
 blade:
+  extends: component
+  name: blade
+
   length:
     class: float
     desc: The blade length
     units: m
-  weight:
-    class: float
-    desc: The blade length
-    units: kg
+    min: 0.0
 
-blade_structure:
+generator:
+  extends: component
+  name: generator
+
+
+tower:
+  base_diameter:
+    class: float
+    desc: The tower base diameter
+    units: m
+    min: 0.0
+
+  top_diameter:
+    class: float
+    desc: The tower top diameter
+    units: m
+    min: 0.0
+
+  wall_thickness:
+    desc: Tower wall thickness
+    units: m
+
+  bottom_moment_max:
+    class: float
+    desc: Maximum tower bottom moment
+    units: kN*m
+
+  bottom_moment_leq:
+    class: float
+    units: kN*m
+    desc: Lifetime equivalent tower bottom moment
+
+  stress_limit_extreme:
+    class: float
+    units: MPa
+    desc: Tower ultimate strength
+
+  stress_limit_fatigue:
+    class: float
+    units: MPa
+    desc: Tower fatigue strength
+
+  safety_factor:
+    class: float
+    desc: Tower loads safety factor
+
+  wohler_exponent:
+    class: float
+    default: 4.0
+    desc: Tower fatigue Wohler exponent
+
+  lifetime_cycles:
+    class: float
+    desc: Equivalent lifetime cycles
+    default: 1.e7
+
+  material: steel
+
+thickness:
+  class: float
+  desc: The thickness
+
+
+blade:
   thicknesses_sections:
     class: [thicknesses]
+
   thicknesses:
-    class: ndarray([radius, material:thickness])
+    class: ndarray([radius, thickness])
+
+  lifetime_cycles:
+    class: float
+    default: 1.e7
+    desc: Equivalent lifetime cycles
+
+  wohler_exponent_flap:
+    class: float
+    desc: Blade flap fatigue Wohler exponent
+
+  rotor_diameter:
+    class: float
+    units: m
+    desc: Rotor diameter
+
+  MaxChordrR:
+    class: float
+    units: m
+    desc: Spanwise position of maximum chord
+
+  root_flap_max:
+    class: float
+    units: kN*m
+    desc: Max blade root flapwise moment
+
+  root_edge_max:
+    class: float
+    units: kN*m
+    desc: Max blade root edgewise moment
+
+  root_flap_leq:
+    class: float
+    units: kN*m
+    desc: Blade root flapwise lifetime eq. moment
+
+  root_edge_leq:
+    class: float
+    units: kN*m
+    desc: Blade root edgewise lifetime eq. moment
+
+  tif_root_flap_ext:
+    class: float
+    default: 1.0
+    desc: Technology improvement factor flap extreme
+
+  tif_root_edge_ext:
+    class: float
+    default: 1.0
+    desc: Technology improvement factor edge extreme
+
+  tif_root_flap_fat:
+    class: float
+    default: 1.0
+    desc: Technology improvement factor flap LEQ
+
+  sc_frac_flap:
+    class: float
+    desc: spar cap fraction of chord
+
+  sc_frac_edge:
+    class: float
+    desc: spar cap fraction of thickness
+
+  safety_factor:
+    class: float
+    desc: Blade loads safety factor
+
+  stress_limit_extreme:
+    class: float
+    units: MPa
+    desc: Blade ultimate strength
+
+  stress_limit_fatigue:
+    class: float
+    units: MPa
+    desc: Blade fatigue strength
+
+  add_weight_factor_blade:
+    class: float
+    desc: Additional weight factor for blade shell
+
+  root_diameter:
+    class: float
+    units :  m
+    desc :  blade root chord # 07/09/2015 added for HubSE model
+
+  material: material
 
 radius:
   class: float
   units: m
-
-material:
-  thickness:
-    class: float
-    units: m
 
 transformer:
   name:
@@ -252,6 +477,7 @@ sensor:
     desc: Height of the sensor over ground
     min: 0.0
     units: m
+
   boom:
     length:
       class: float
@@ -259,12 +485,14 @@ sensor:
       min: 0.0
       max: 50.0
       units: m
+
     angle:
       class: float
       desc: angle from the north direction of the boom.
       min: 0.0
       max: 360.0
       units: deg
+
     diameter:
       class: float
       desc: the diameter of the boom
