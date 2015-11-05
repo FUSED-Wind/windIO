@@ -93,7 +93,7 @@ wind_turbine:
 
   rotor: rotor
 
-  type: turbine_types:type_id # Link to complementary information about the turbine
+  type: wind_turbine # Link to complementary information about the turbine
 
   wind_rose: wind_rose
 
@@ -107,11 +107,11 @@ weibull_wind_rose:
 frequency_wind_rose:
   desc: A wind rose described by a 2D array of wind speed and wind directions
 
-  wind_directions:
+  directions:
     class: ndarray([wind:direction])
     desc: the wind direction corresponding to the 1st dimension
 
-  wind_speeds:
+  speeds:
     class: ndarray([wind:speed])
     desc: the wind speed corresponding to the 2nd dimension
 
@@ -129,6 +129,14 @@ distribution:
       class: float
       desc: the k parameter of a weibull distribution
 
+  gaussian:
+    mu:
+      class: float
+      desc: The mean value
+    sig:
+      class: float
+      desc: The standard deviation
+      min: 0.0
 
 wind:
   direction:
@@ -144,6 +152,14 @@ wind:
     min: 0.0
     max: 100.0
     units: m/s
+
+  ti:
+    class: float
+    desc: Turbulence intensity
+    min: 0.0
+    max: 1.0
+
+
 
 frequency:
   class: float
@@ -178,8 +194,7 @@ rotor:
     min: 0.0
     expr: 2.0 pi * radius**2.0
 
-  blades:
-    class: [blade]
+  blades: [blade]
 
 hub:
   height:
@@ -220,9 +235,77 @@ material:
     class: float
     units: m
 
+transformer:
+  name:
+    class: str
+    desc: The transformer name given by the wind power plant owner
 
-turbine_layout:
-  turbine_id: wind_turbine
+  position:
+    class: [float, float]
+    size: 2
+    desc: The [x,y] position of the transformer in UTM coordinates
+    units: m
+
+sensor:
+  height:
+    class: float
+    desc: Height of the sensor over ground
+    min: 0.0
+    units: m
+  boom:
+    length:
+      class: float
+      desc: radial distance of the sensor from the mast.
+      min: 0.0
+      max: 50.0
+      units: m
+    angle:
+      class: float
+      desc: angle from the north direction of the boom.
+      min: 0.0
+      max: 360.0
+      units: deg
+    diameter:
+      class: float
+      desc: the diameter of the boom
+      min: 0.0
+      max: 1.0
+      units: m
+
+vane:
+  wind_direction: wind:direction
+  extends: sensor
+
+wind_speed_sensor:
+  wind_speed: wind:speed
+  extends: sensor
+
+anemometer: wind_speed_sensor
+sonic: wind_speed_sensor
+lidar: wind_speed_sensor
+
+
+metmast:
+  name:
+    class: str
+    desc: The meteorological mast name given by the wind power plant owner
+
+  position:
+    class: [float, float]
+    size: 2
+    desc: The [x,y] position of the meteorological mast in UTM coordinates
+    units: m
+
+  sensors: [sensor]
+
+transformers:
+  _transformer_id_: transformer
+
+metmasts:
+  _metmast_id_: metmast
+
+turbines:
+  _turbine_id_: wind_turbine # _variables_ indicate keys that can change name
 
 turbine_types:
-  type_id: wind_turbine
+  _type_id_: wind_turbine
