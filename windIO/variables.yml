@@ -1,0 +1,228 @@
+wind_turbine:
+  name:
+    class: str
+    desc: The wind turbine name given by the wind power plant owner
+
+  position:
+    class: [float, float]
+    size: 2
+    desc: The [x,y] position of the wind turbine in UTM coordinates
+    units: m
+
+  rated_power:
+    class: float
+    desc: The rotor diameter
+    units: kW
+    min: 0.0
+    max: power_curve.max(1)
+
+  cut_in_wind_speed:
+    class: float
+    desc: The starting wind speed of the wind turbine
+    default: 4.0
+    units: m/s
+
+  cut_out_wind_speed:
+    class: float
+    desc: The stopping wind speed of the wind turbine
+    units: m/s
+    default: 25.0
+    min: rated_wind_speed
+    max: 100.0
+
+  rated_wind_speed:
+    class: float
+    desc: The wind speed where the turbine reaches its rated power
+    units: m/s
+    min: cut_in_wind_speed
+    max: cut_out_wind_speed
+
+  air_density:
+    class: float
+    desc: The rotor diameter
+    units: m
+    default: 1.225
+    min: 0.5
+    max: 2.0
+
+  power_curve:
+    class: ndarray([[hub:wind_speed], [c_t]])
+    desc: The wind turbine power curve
+
+  c_t_curve:
+    class: ndarray([[hub:wind_speed], [c_t]])
+    desc: The wind turbine C_T curve
+
+  c_t:
+    class: float
+    desc: The current thrust coefficient of the wind turbine
+    min: 0.0
+    max: 1.2
+    expr: thrust / (1/2 * air_density * rotor_area * hub:wind_speed**2.0)
+
+  c_t_idle:
+    class: float
+    desc: The thrust coefficient of an idle wind turbine
+    default: 0.056
+    min: 0.0
+    max: 1.0
+
+  c_p:
+    class: float
+    desc: The current power coefficient of the wind turbine
+    min: 0.0
+    max: 0.599
+    expr: power / (1/2 * air_density * rotor_area * hub:wind_speed**3.0)
+
+  thrust:
+    class: float
+    desc: The wind turbine axial thrust
+    units: N
+    min: 0.0
+    expr: 1/2 * air_density * rotor_area * c_t * hub:wind_speed**2.0
+
+  power:
+    class: float
+    desc: The wind turbine electrical power
+    units: kW
+    min: 0.0
+    max: 100000
+    expr: 1/2 * air_density * rotor_area * c_p * hub_wind_speed**3.0
+
+  hub: hub
+
+  rotor: rotor
+
+  type: turbine_types:type_id # Link to complementary information about the turbine
+
+  wind_rose: wind_rose
+
+# Wind rose definitions
+wind_rose: weibull_wind_rose | frequency_wind_rose
+
+weibull_wind_rose:
+  class: ndarray([[wind:direction], [frequency], [distribution:weibull:A], [distribution:weibull:k]])
+  desc: A wind rose descrived as an array of weibull distributions
+
+frequency_wind_rose:
+  desc: A wind rose described by a 2D array of wind speed and wind directions
+
+  wind_directions:
+    class: ndarray([wind:direction])
+    desc: the wind direction corresponding to the 1st dimension
+
+  wind_speeds:
+    class: ndarray([wind:speed])
+    desc: the wind speed corresponding to the 2nd dimension
+
+  frequency:
+    class: ndarray(frequency)
+    desc: the frequency array shape([len(wind_directions), len(wind_speeds)])
+
+
+distribution:
+  weibull:
+    A:
+      class: float
+      desc: the A parameter of a weibull distribution
+    k:
+      class: float
+      desc: the k parameter of a weibull distribution
+
+
+wind:
+  direction:
+    class: float
+    desc: The wind direction
+    units: deg
+    min: 0.0
+    max: 360.0
+
+  speed:
+    class: float
+    desc: A wind speed
+    min: 0.0
+    max: 100.0
+    units: m/s
+
+frequency:
+  class: float
+  desc: probability of an event to happen
+  min: 0.0
+  max: 1.0
+
+rotor:
+  diameter:
+    class: float
+    desc: The rotor diameter
+    units: m
+    min: hub:height * 2.0
+    expr: radius * 2.0
+
+  radius:
+    class: float
+    desc: The rotor radius
+    min: hub:height
+    expr: diameter / 2.0
+
+  weight:
+    class: float
+    units: kg
+    desc: The rotor weight
+    expr: sum([b.weight for b in blades])
+
+  area:
+    class: float
+    desc: The rotor area
+    units: m*m
+    min: 0.0
+    expr: 2.0 pi * radius**2.0
+
+  blades:
+    class: [blade]
+
+hub:
+  height:
+    class: float
+    desc: The hub height
+    units: m
+    min: rotor:diameter / 2.0
+
+  wind_speed:
+    class: float
+    desc: The current wind speed at hub height
+    min: 0.0
+    max: 200.0
+    units: m/s
+
+blade:
+  length:
+    class: float
+    desc: The blade length
+    units: m
+  weight:
+    class: float
+    desc: The blade length
+    units: kg
+
+blade_structure:
+  thicknesses_sections:
+    class: [thicknesses]
+  thicknesses:
+    class: ndarray([radius, material:thickness])
+
+radius:
+  class: float
+  units: m
+
+material:
+  thickness:
+    class: float
+    units: m
+
+
+turbine_layout:
+  turbine_id: wind_turbine
+
+turbine_types:
+  type_id: wind_turbine

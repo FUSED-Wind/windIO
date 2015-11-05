@@ -1,4 +1,4 @@
-turbines:
+turbine_layout:
   A-01:
     name: A-01
     position: [361469, 6154542]
@@ -199,10 +199,11 @@ metmasts:
   p2:
     name: Mast-p2
     position: [358851, 6152678]
+
 turbine_types:
   SWP2.3MW:
-     hub_height: 65.0
-     rotor_diameter: 92.6
+     hub: height: 65.0
+     rotor: diameter: 92.6
      rated_power: 2300.0
      cut_in_wind_speed: 4.0
      cut_out_wind_speed: 25.0
@@ -257,3 +258,4 @@ turbine_types:
         - [24.0, 0.05]
         - [25.0, 0.05]
 
+HAWC2_Wrapper:
