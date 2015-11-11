@@ -61,6 +61,7 @@ definitions:
         description: The starting wind speed of the wind turbine
         default: 4.0
         minimum: 0.0
+        maximum: 100.0
         expr_max: cut_out_wind_speed
         units: m/s
 
@@ -96,8 +97,9 @@ definitions:
         items:
           type: array
           items:
-            - $ref: "#/definitions/hub/properties/speed"
-            - $ref: "#/definitions/power"
+            - $ref: "#/definitions/hub/properties/wind_speed"
+            - $ref: "#/definitions/wind_turbine/properties/power"
+          additionalItems: false
 
       c_t_curve:
         description: The wind turbine C_T curve
@@ -105,8 +107,9 @@ definitions:
         items:
           type: array
           items:
-            - $ref: "#/definitions/hub/properties/speed"
-            - $ref: "#/definitions/c_t"
+            - $ref: "#/definitions/hub/properties/wind_speed"
+            - $ref: "#/definitions/wind_turbine/properties/c_t"
+          additionalItems: false
 
       c_t:
         type: number
