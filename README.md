@@ -3,19 +3,20 @@ A multi-language library to write inputs / output files
 
 # Motivation
 Wind Energy software ecosystem is a mess. There are many different softwares and
-research models that are in competition with their own defined input and output
-files. The compatibility between one tool or another is completely left for at the
+research models that are in competition, and introduced their own defined input and output files.
+The compatibility between one tool or another is completely left for at the
 discretion of the developers and the users. As the ecosystem is mostly closed source
 those file convertors are sitting on the companies or individual hard disc rotting
 sometime unused, until they become irrelevant. This condition makes it very difficult
 for users to get second opinion on their analysis by using another tool, or to
 create system engineering workflows by combining different design and analysis
 tools together.
-This library is an attempt to offer a standard type of I/O fully documented and
-flexible enough to cover most use cases. It is the idea that each model and  code
+This library is an attempt to offer a standard type of I/O files, fully documented and
+flexible enough to cover most use cases. It is the idea that each model and code
 developers can create a file translator to offer a compatibility to this file format.
 This library is also a core element of the FUSED-Wind framework, which offers a
-code-agnostic and model-agnostic ontology to formulate analysis and design workflows, connect models of different level of fidelities.
+code-agnostic and model-agnostic ontology to formulate analysis and design workflows,
+and to connect models of different level of fidelities together.
 
 # Concept
 The library is using json-schema to enforce a taxonomy of how the files should be
