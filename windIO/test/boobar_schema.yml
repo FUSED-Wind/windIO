@@ -1,0 +1,152 @@
+title: root
+$schema: http://json-schema.org/draft-04/schema#
+properties:
+  foo:
+    type: integer
+
+  bar:
+    type: number
+
+  hello:
+    type: string
+
+  kitty:
+    type: array
+    items:
+      type: number
+
+  wt:
+    $ref: "#/definitions/wind_turbine"
+
+definitions:
+  wind_turbine:
+    type: object
+    properties:
+      hub:
+        $ref: "#/definitions/hub"
+      rotor:
+        $ref: "#/definitions/rotor"
+      generator:
+        $ref: "#/definitions/generator"
+
+    required:
+      - rotor
+      - hub
+      - generator
+
+  generator:
+    type: object
+    properties:
+      rated_power:
+        type: number
+        units: kW
+        minimum: 0.0
+
+
+  hub:
+    type: object
+    properties:
+      height:
+        type: number
+        minimum: 0.0
+        maximum: 1000.0
+        units: m
+        description: 'The hub height'
+
+
+  rotor:
+    type: object
+    properties:
+      diameter:
+        type: number
+        minimum: 0.0
+        units: m
+        description: The rotor diameter
+
+      mass:
+        type: number
+        minimum: 0.0
+        units: kg
+        description: the rotor weight
+        expr: sum([b.mass for b in blades])
+
+      n_blades:
+        type: integer
+        default: 3
+        description: Number of wind turbine blades
+        expr: len(blades)
+
+      blades:
+        type: array
+        items:
+          $ref: "#/definitions/blade"
+
+    required:
+      - diameter
+
+  blade:
+    type: object
+    properties:
+      length:
+        type: number
+        units: m
+        minimum: 0.0
+
+      mass:
+        type: number
+        units: kg
+        minimum: 0.0
+
+      airfoils:
+        type: array
+        items:
+          allOf:
+            - $ref: "#/definitions/airfoil"
+            - r:
+                anyOf:
+                  - description: radial position in [m]
+                    type: number
+                    units: m
+                    minimum: 0.0
+                  - description: normalized radial position in [-]
+                    type: number
+                    minimum: 0.0
+                    maximum: 1.0
+
+
+  airfoil:
+    NACA:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the airfoil (e.g. NACAXXXX)
+          pattern: NACA[0-9]*
+
+    DU:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the airfoil (e.g. DUXXXX)
+          pattern: DU[0-9]*
+
+    shape:
+      type: object
+      properties:
+        anyOf:
+          - file_name:
+              type: string
+              description: The file name of the array
+          - xy:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+                description: "[x,y] location of a point in the plane of the airfoil"
+
+    anyOf:
+      - $ref: "#/definitions/airfoil/NACA"
+      - $ref: "#/definitions/airfoil/DU"
+      - $ref: "#/definitions/airfoil/shape"

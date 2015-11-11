@@ -1,213 +1,223 @@
+"$schema": "http://json-schema.org/draft-04/schema#",
+title: windIO file
+description: A file used as input or output of a wind energy model
+type: object
+
+# Some base schema
 wind_turbine:
-  name:
-    class: str
-    desc: The wind turbine name given by the wind power plant owner
+  type: object
+  description: An object describing a wind turbine
 
-  position:
-    class: [float, float]
-    size: 2
-    desc: The [x,y] position of the wind turbine in UTM coordinates
-    units: m
+  properties:
+    name:
+      type: string
+      description: The wind turbine name given by the wind power plant owner
 
-  rated_power:
-    class: float
-    desc: The rotor diameter
-    units: kW
-    min: 0.0
-    max: power_curve.max(1)
+    position:
+      type: [float, float]
+      size: 2
+      description: The [x,y] position of the wind turbine in UTM coordinates
+      units: m
 
-  cut_in_wind_speed:
-    class: float
-    desc: The starting wind speed of the wind turbine
-    default: 4.0
-    units: m/s
+    rated_power:
+      type: number
+      description: The rotor diameter
+      units: kW
+      minimum: 0.0
+      maximum: power_curve.max(1)
 
-  cut_out_wind_speed:
-    class: float
-    desc: The stopping wind speed of the wind turbine
-    units: m/s
-    default: 25.0
-    min: rated_wind_speed
-    max: 100.0
+    cut_in_wind_speed:
+      type: number
+      description: The starting wind speed of the wind turbine
+      default: 4.0
+      units: m/s
 
-  rated_wind_speed:
-    class: float
-    desc: The wind speed where the turbine reaches its rated power
-    units: m/s
-    min: cut_in_wind_speed
-    max: cut_out_wind_speed
+    cut_out_wind_speed:
+      type: number
+      description: The stopping wind speed of the wind turbine
+      units: m/s
+      default: 25.0
+      minimum: rated_wind_speed
+      maximum: 100.0
 
-  air_density:
-    class: float
-    desc: The rotor diameter
-    units: m
-    default: 1.225
-    min: 0.5
-    max: 2.0
+    rated_wind_speed:
+      type: number
+      description: The wind speed where the turbine reaches its rated power
+      units: m/s
+      minimum: cut_in_wind_speed
+      maximum: cut_out_wind_speed
 
-  power_curve:
-    class: ndarray([[hub:wind_speed], [c_t]])
-    desc: The wind turbine power curve
+    air_density:
+      type: number
+      description: The rotor diameter
+      units: m
+      default: 1.225
+      minimum: 0.5
+      maximum: 2.0
 
-  c_t_curve:
-    class: ndarray([[hub:wind_speed], [c_t]])
-    desc: The wind turbine C_T curve
+    power_curve:
+      type: ndarray([[hub:wind_speed], [c_t]])
+      description: The wind turbine power curve
 
-  c_t:
-    class: float
-    desc: The current thrust coefficient of the wind turbine
-    min: 0.0
-    max: 1.2
-    expr: thrust / (1/2 * air_density * rotor_area * hub:wind_speed**2.0)
+    c_t_curve:
+      type: ndarray([[hub:wind_speed], [c_t]])
+      description: The wind turbine C_T curve
 
-  c_t_idle:
-    class: float
-    desc: The thrust coefficient of an idle wind turbine
-    default: 0.056
-    min: 0.0
-    max: 1.0
+    c_t:
+      type: number
+      description: The current thrust coefficient of the wind turbine
+      minimum: 0.0
+      maximum: 1.2
+      expr: thrust / (1/2 * air_density * rotor_area * hub:wind_speed**2.0)
 
-  c_p:
-    class: float
-    desc: The current power coefficient of the wind turbine
-    min: 0.0
-    max: 0.599
-    expr: power / (1/2 * air_density * rotor_area * hub:wind_speed**3.0)
+    c_t_idle:
+      type: number
+      description: The thrust coefficient of an idle wind turbine
+      default: 0.056
+      minimum: 0.0
+      maximum: 1.0
 
-  thrust:
-    class: float
-    desc: The wind turbine axial thrust
-    units: N
-    min: 0.0
-    expr: 1/2 * air_density * rotor_area * c_t * hub:wind_speed**2.0
+    c_p:
+      type: number
+      description: The current power coefficient of the wind turbine
+      minimum: 0.0
+      maximum: 0.599
+      expr: power / (1/2 * air_density * rotor_area * hub:wind_speed**3.0)
 
-  power:
-    class: float
-    desc: The wind turbine electrical power
-    units: kW
-    min: 0.0
-    max: 100000
-    expr: 1/2 * air_density * rotor_area * c_p * hub_wind_speed**3.0
+    thrust:
+      type: number
+      description: The wind turbine axial thrust
+      units: N
+      minimum: 0.0
+      expr: 1/2 * air_density * rotor_area * c_t * hub:wind_speed**2.0
 
-  hub: hub
+    power:
+      type: number
+      description: The wind turbine electrical power
+      units: kW
+      minimum: 0.0
+      maximum: 100000
+      expr: 1/2 * air_density * rotor_area * c_p * hub_wind_speed**3.0
 
-  rotor: rotor
+    hub: hub
 
-  type: wind_turbine # Link to complementary information about the turbine
+    rotor: rotor
 
-  wind_rose: wind_rose
+    type: wind_turbine # Link to complementary information about the turbine
+
+    wind_rose: wind_rose
 
 # Wind rose definitions
 wind_rose: weibull_wind_rose | frequency_wind_rose
 
 weibull_wind_rose:
-  class: ndarray([[wind:direction], [frequency], [distribution:weibull:A], [distribution:weibull:k]])
-  desc: A wind rose descrived as an array of weibull distributions
+  type: ndarray([[wind:direction], [frequency], [distribution:weibull:A], [distribution:weibull:k]])
+  description: A wind rose descrived as an array of weibull distributions
 
 frequency_wind_rose:
-  desc: A wind rose described by a 2D array of wind speed and wind directions
+  description: A wind rose described by a 2D array of wind speed and wind directions
 
   directions:
-    class: ndarray([wind:direction])
-    desc: the wind direction corresponding to the 1st dimension
+    type: ndarray([wind:direction])
+    description: the wind direction corresponding to the 1st dimension
 
   speeds:
-    class: ndarray([wind:speed])
-    desc: the wind speed corresponding to the 2nd dimension
+    type: ndarray([wind:speed])
+    description: the wind speed corresponding to the 2nd dimension
 
   frequency:
-    class: ndarray(frequency)
-    desc: the frequency array shape([len(wind_directions), len(wind_speeds)])
+    type: ndarray(frequency)
+    description: the frequency array shape([len(wind_directions), len(wind_speeds)])
 
 
 distribution:
   weibull:
     A:
-      class: float
-      desc: the A parameter of a weibull distribution
+      type: number
+      description: the A parameter of a weibull distribution
     k:
-      class: float
-      desc: the k parameter of a weibull distribution
+      type: number
+      description: the k parameter of a weibull distribution
 
   gaussian:
     mu:
-      class: float
-      desc: The mean value
+      type: number
+      description: The mean value
     sig:
-      class: float
-      desc: The standard deviation
-      min: 0.0
+      type: number
+      description: The standard deviation
+      minimum: 0.0
 
 wind:
   direction:
-    class: float
-    desc: The wind direction
+    type: number
+    description: The wind direction
     units: deg
-    min: 0.0
-    max: 360.0
+    minimum: 0.0
+    maximum: 360.0
 
   speed:
-    class: float
-    desc: A wind speed
-    min: 0.0
-    max: 100.0
+    type: number
+    description: A wind speed
+    minimum: 0.0
+    maximum: 100.0
     units: m/s
 
   ti:
-    class: float
-    desc: Turbulence intensity
-    min: 0.0
-    max: 1.0
+    type: number
+    description: Turbulence intensity
+    minimum: 0.0
+    maximum: 1.0
 
 
 
 frequency:
-  class: float
-  desc: probability of an event to happen
-  min: 0.0
-  max: 1.0
+  type: number
+  description: probability of an event to happen
+  minimum: 0.0
+  maximum: 1.0
 
 rotor:
   diameter:
-    class: float
-    desc: The rotor diameter
+    type: number
+    description: The rotor diameter
     units: m
-    min: hub:height * 2.0
+    minimum: hub:height * 2.0
     expr: radius * 2.0
 
   radius:
-    class: float
-    desc: The rotor radius
-    min: hub:height
+    type: number
+    description: The rotor radius
+    minimum: hub:height
     expr: diameter / 2.0
 
   weight:
-    class: float
+    type: number
     units: kg
-    desc: The rotor weight
+    description: The rotor weight
     expr: sum([b.weight for b in blades])
 
   area:
-    class: float
-    desc: The rotor area
+    type: number
+    description: The rotor area
     units: m*m
-    min: 0.0
+    minimum: 0.0
     expr: 2.0 pi * radius**2.0
 
   blades: [blade]
 
 hub:
   height:
-    class: float
-    desc: The hub height
+    type: number
+    description: The hub height
     units: m
-    min: rotor:diameter / 2.0
+    minimum: rotor:diameter / 2.0
 
   wind_speed:
-    class: float
-    desc: The current wind speed at hub height
-    min: 0.0
-    max: 200.0
+    type: number
+    description: The current wind speed at hub height
+    minimum: 0.0
+    maximum: 200.0
     units: m/s
 
 material_cost:
@@ -215,35 +225,35 @@ material_cost:
 
 material:
   name:
-    class: str
-    desc: The material name
+    type: string
+    description: The material name
 
   density:
-    min: 0.0
-    desc: The material density
+    minimum: 0.0
+    description: The material density
     units: kg/m**3
 
   cost_per_mass:
-    class: float
-    desc: The cost per mass
-    min: 0.0
+    type: number
+    description: The cost per mass
+    minimum: 0.0
     units: USD/kg
 
   volume:
-    class: float
-    desc: the material volume
+    type: number
+    description: the material volume
 
   mass:
-    class: float
-    desc: the total component mass
+    type: number
+    description: the total component mass
     units: kg
-    min: 0.0
+    minimum: 0.0
     expr: volume * density
 
   cost:
-    class: float
-    desc: the material cost
-    min: 0.0
+    type: number
+    description: the material cost
+    minimum: 0.0
     expr: mass * cost_per_mass
 
 steel:
@@ -254,50 +264,50 @@ steel:
 
 component:
   name:
-    class: str
-    desc: the component name
+    type: string
+    description: the component name
 
   materials: [material] # Used if there are several materials
   material: material # Used if there is only on material
 
   cost:
     material:
-      class: float
-      desc: The total cost per mass
+      type: number
+      description: The total cost per mass
       expr: material:mass * material:cost_per_mass
         #sum([m.mass * m.cost_per_mass for m in materials])
-      min: 0.0
+      minimum: 0.0
 
     installation:
-      class: float
-      desc: The installation cost of the component
-      min: 0.0
+      type: number
+      description: The installation cost of the component
+      minimum: 0.0
 
     replacement:
-      class: float
-      desc: The maintenance cost to replace the component
-      min: 0.0
+      type: number
+      description: The maintenance cost to replace the component
+      minimum: 0.0
 
     manufacturing:
-      class: float
-      desc: The manufacturing cost of the component
-      min: 0.0
+      type: number
+      description: The manufacturing cost of the component
+      minimum: 0.0
 
     total:
-      class: float
-      desc: The total cost per mass
+      type: number
+      description: The total cost per mass
       expr: material + installation + manufacturing
-      min: 0.0
+      minimum: 0.0
 
 blade:
   extends: component
   name: blade
 
   length:
-    class: float
-    desc: The blade length
+    type: number
+    description: The blade length
     units: m
-    min: 0.0
+    minimum: 0.0
 
 generator:
   extends: component
@@ -306,198 +316,198 @@ generator:
 
 tower:
   base_diameter:
-    class: float
-    desc: The tower base diameter
+    type: number
+    description: The tower base diameter
     units: m
-    min: 0.0
+    minimum: 0.0
 
   top_diameter:
-    class: float
-    desc: The tower top diameter
+    type: number
+    description: The tower top diameter
     units: m
-    min: 0.0
+    minimum: 0.0
 
   wall_thickness:
-    desc: Tower wall thickness
+    description: Tower wall thickness
     units: m
 
   bottom_moment_max:
-    class: float
-    desc: Maximum tower bottom moment
+    type: number
+    description: Maximum tower bottom moment
     units: kN*m
 
   bottom_moment_leq:
-    class: float
+    type: number
     units: kN*m
-    desc: Lifetime equivalent tower bottom moment
+    description: Lifetime equivalent tower bottom moment
 
   stress_limit_extreme:
-    class: float
+    type: number
     units: MPa
-    desc: Tower ultimate strength
+    description: Tower ultimate strength
 
   stress_limit_fatigue:
-    class: float
+    type: number
     units: MPa
-    desc: Tower fatigue strength
+    description: Tower fatigue strength
 
   safety_factor:
-    class: float
-    desc: Tower loads safety factor
+    type: number
+    description: Tower loads safety factor
 
   wohler_exponent:
-    class: float
+    type: number
     default: 4.0
-    desc: Tower fatigue Wohler exponent
+    description: Tower fatigue Wohler exponent
 
   lifetime_cycles:
-    class: float
-    desc: Equivalent lifetime cycles
+    type: number
+    description: Equivalent lifetime cycles
     default: 1.e7
 
   material: steel
 
 thickness:
-  class: float
-  desc: The thickness
+  type: number
+  description: The thickness
 
 
 blade:
   thicknesses_sections:
-    class: [thicknesses]
+    type: [thicknesses]
 
   thicknesses:
-    class: ndarray([radius, thickness])
+    type: ndarray([radius, thickness])
 
   lifetime_cycles:
-    class: float
+    type: number
     default: 1.e7
-    desc: Equivalent lifetime cycles
+    description: Equivalent lifetime cycles
 
   wohler_exponent_flap:
-    class: float
-    desc: Blade flap fatigue Wohler exponent
+    type: number
+    description: Blade flap fatigue Wohler exponent
 
   rotor_diameter:
-    class: float
+    type: number
     units: m
-    desc: Rotor diameter
+    description: Rotor diameter
 
   MaxChordrR:
-    class: float
+    type: number
     units: m
-    desc: Spanwise position of maximum chord
+    description: Spanwise position of maximum chord
 
   root_flap_max:
-    class: float
+    type: number
     units: kN*m
-    desc: Max blade root flapwise moment
+    description: Max blade root flapwise moment
 
   root_edge_max:
-    class: float
+    type: number
     units: kN*m
-    desc: Max blade root edgewise moment
+    description: Max blade root edgewise moment
 
   root_flap_leq:
-    class: float
+    type: number
     units: kN*m
-    desc: Blade root flapwise lifetime eq. moment
+    description: Blade root flapwise lifetime eq. moment
 
   root_edge_leq:
-    class: float
+    type: number
     units: kN*m
-    desc: Blade root edgewise lifetime eq. moment
+    description: Blade root edgewise lifetime eq. moment
 
   tif_root_flap_ext:
-    class: float
+    type: number
     default: 1.0
-    desc: Technology improvement factor flap extreme
+    description: Technology improvement factor flap extreme
 
   tif_root_edge_ext:
-    class: float
+    type: number
     default: 1.0
-    desc: Technology improvement factor edge extreme
+    description: Technology improvement factor edge extreme
 
   tif_root_flap_fat:
-    class: float
+    type: number
     default: 1.0
-    desc: Technology improvement factor flap LEQ
+    description: Technology improvement factor flap LEQ
 
   sc_frac_flap:
-    class: float
-    desc: spar cap fraction of chord
+    type: number
+    description: spar cap fraction of chord
 
   sc_frac_edge:
-    class: float
-    desc: spar cap fraction of thickness
+    type: number
+    description: spar cap fraction of thickness
 
   safety_factor:
-    class: float
-    desc: Blade loads safety factor
+    type: number
+    description: Blade loads safety factor
 
   stress_limit_extreme:
-    class: float
+    type: number
     units: MPa
-    desc: Blade ultimate strength
+    description: Blade ultimate strength
 
   stress_limit_fatigue:
-    class: float
+    type: number
     units: MPa
-    desc: Blade fatigue strength
+    description: Blade fatigue strength
 
   add_weight_factor_blade:
-    class: float
-    desc: Additional weight factor for blade shell
+    type: number
+    description: Additional weight factor for blade shell
 
   root_diameter:
-    class: float
+    type: number
     units :  m
     desc :  blade root chord # 07/09/2015 added for HubSE model
 
   material: material
 
 radius:
-  class: float
+  type: number
   units: m
 
 transformer:
   name:
-    class: str
-    desc: The transformer name given by the wind power plant owner
+    type: string
+    description: The transformer name given by the wind power plant owner
 
   position:
-    class: [float, float]
+    type: [float, float]
     size: 2
-    desc: The [x,y] position of the transformer in UTM coordinates
+    description: The [x,y] position of the transformer in UTM coordinates
     units: m
 
 sensor:
   height:
-    class: float
-    desc: Height of the sensor over ground
-    min: 0.0
+    type: number
+    description: Height of the sensor over ground
+    minimum: 0.0
     units: m
 
   boom:
     length:
-      class: float
-      desc: radial distance of the sensor from the mast.
-      min: 0.0
-      max: 50.0
+      type: number
+      description: radial distance of the sensor from the mast.
+      minimum: 0.0
+      maximum: 50.0
       units: m
 
     angle:
-      class: float
-      desc: angle from the north direction of the boom.
-      min: 0.0
-      max: 360.0
+      type: number
+      description: angle from the north direction of the boom.
+      minimum: 0.0
+      maximum: 360.0
       units: deg
 
     diameter:
-      class: float
-      desc: the diameter of the boom
-      min: 0.0
-      max: 1.0
+      type: number
+      description: the diameter of the boom
+      minimum: 0.0
+      maximum: 1.0
       units: m
 
 vane:
@@ -512,28 +522,31 @@ anemometer: wind_speed_sensor
 sonic: wind_speed_sensor
 lidar: wind_speed_sensor
 
+## The windIO file properties
+properties:
+  metmast:
+    name:
+      type: string
+      description: The meteorological mast name given by the wind power plant owner
 
-metmast:
-  name:
-    class: str
-    desc: The meteorological mast name given by the wind power plant owner
+    position:
+      type: array
+      items:
+        type: number
+      size: 2
+      description: The [x,y] position of the meteorological mast in UTM coordinates
+      units: m
 
-  position:
-    class: [float, float]
-    size: 2
-    desc: The [x,y] position of the meteorological mast in UTM coordinates
-    units: m
+    sensors: [sensor]
 
-  sensors: [sensor]
+  transformers:
+    _transformer_id_: transformer
 
-transformers:
-  _transformer_id_: transformer
+  metmasts:
+    _metmast_id_: metmast
 
-metmasts:
-  _metmast_id_: metmast
+  turbines:
+    _turbine_id_: wind_turbine # _variables_ indicate keys that can change name
 
-turbines:
-  _turbine_id_: wind_turbine # _variables_ indicate keys that can change name
-
-turbine_types:
-  _type_id_: wind_turbine
+  turbine_types:
+    _type_id_: wind_turbine

@@ -1,0 +1,27 @@
+foo: 1
+bar: 2.0
+hello: world
+kitty:
+  - 1.
+  - 2.
+  - 3.
+wt:
+  hub:
+    height: 1.0E+2
+  rotor:
+    mass: 300.0
+    diameter: 80.0
+    blades:
+      - length: 40.0
+        mass: 100
+        airfoils:
+          - r: 0.0
+            name: NACA1111
+          - r: 0.5
+            name: DsU211
+      - length: 40.0
+        mass: 100
+      - length: 40.0
+        mass: 100
+  generator:
+    rated_power: 2000.0
