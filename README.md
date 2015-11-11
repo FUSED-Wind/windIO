@@ -1,5 +1,5 @@
 # windIO
-A python library to write inputs / output files
+A multi-language library to write inputs / output files
 
 # Motivation
 Wind Energy software ecosystem is a mess. There are many different softwares and
@@ -23,7 +23,7 @@ organized. That means that the files used in the library will be automatically
 checked to see if they fulfill the requirements of the schema. Both JSON and
 YAML file format will be supported.
 The library will contain an implementation of the file reader/writer in different
-languages (e.g. Python, Matlab).
+languages (e.g. Python, Matlab, Javascript).
 Additionally some standard visualization functions will be available for some of
 the scripting languages implementations.
 
@@ -31,7 +31,8 @@ the scripting languages implementations.
 Additional file format plugins will be also
 supported as pull-request contribution to the library (e.g. WAsP power curve .wtf
 file, WRF NETCDF file, ).
-The library will also offer the possibility to upload
+The library will also offer the possibility to upload plugin visualization functions
+in different languages.
 
 ## Documentation
 The library will eventually also build a documentation of the file schema.
