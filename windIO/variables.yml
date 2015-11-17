@@ -165,20 +165,20 @@ definitions:
     type: object
     oneOf:
       - $ref: "#/definitions/weibull_wind_rose"
-      - $ref: "#/definitions/frequency_wind_rose"
+      - $ref: "#/definitions/probability_wind_rose"
 
   weibull_wind_rose:
     description: A wind rose descrived as an array of weibull distributions
-    type: array #ndarray([[wind:direction], [frequency], [distribution:weibull:A], [distribution:weibull:k]])
+    type: array #ndarray([[wind:direction], [probability], [distribution:weibull:A], [distribution:weibull:k]])
     items:
       type: array
       items:
         - $ref: "#/definitions/wind/properties/direction"
-        - $ref: "#/definitions/frequency"
+        - $ref: "#/definitions/probability"
         - $ref: "#/definitions/distribution/weibull/properties/A"
         - $ref: "#/definitions/distribution/weibull/properties/k"
 
-  frequency_wind_rose:
+  probability_wind_rose:
     type: object
     description: A wind rose described by a 2D array of wind speed and wind directions
 
@@ -187,7 +187,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/wind/properties/wind_direction"
-          #TODO: check if its not wind/properties/direction instead
         description: the wind direction corresponding to the 1st dimension
 
       speeds:
@@ -196,17 +195,51 @@ definitions:
           $ref: "#/definitions/wind/properties/speed"
         description: the wind speed corresponding to the 2nd dimension
 
-      frequency:
-        type: array #ndarray(frequency)
+      probability:
+        type: array #ndarray(probability)
         items:
-          $ref: "#/definitions/frequency"
-        description: the frequency array shape([len(wind_directions), len(wind_speeds)])
+          type: array
+          items:
+            $ref: "#/definitions/probability"
+        description: the probability of occurance of wind speed ndarray.shape([len(wind_directions), len(wind_speeds)])
 
 
   distribution:
-    oneOf:
-      - $ref: "weibull"
-      - $ref: "gaussian"
+    anyOf:
+      - oneOf:
+          - $ref: "scalar"
+          - $ref: "uniform"
+          - $ref: "weibull"
+          - $ref: "gaussian"
+          - $ref: "KDE"
+          - $ref: "GP"
+      - min:
+          type: number
+          description: truncation of the distribution
+        max:
+          type: number
+          description: truncation of the distribution
+        uncertainty:
+          $ref: "#/definitions/distribution"
+
+    scalar:
+      type: number
+
+    uniform:
+      description: A uniformed distribution [min, max]
+      type: array
+      items:
+        - type: number
+        - type: number
+        additionalItems: false
+
+    lognormal:
+      type: object
+      properties:
+        mu:
+          type: number
+        sig:
+          type: number
 
     weibull:
       type: object
@@ -229,23 +262,70 @@ definitions:
           description: The standard deviation
           minimum: 0.0
 
+    KDE:
+      description: | A Kernel Density Estimator representation of a distribution.
+                   | See http://scikit-learn.org/stable/modules/density.html
+      type: object
+      properties:
+        kernel:
+          type: string
+          description: the type of kernel used for the KDE representation.
+          enum:
+            - gaussian
+            - tophat
+            - epanechnikov
+            - linear
+            - cosine
+        bandwitdh:
+          type: number
+          minimum: 0.0
+          description: the bandwidth of the kernel
+        array:
+          type: array
+          items:
+            type: number
+            description: the position of the center
+          description: Array to describe a distribution size:n, with n the number of normals centers
+    GP:
+      description: A Gaussian Process
+      type: object
+      properties:
+        points:
+          type: array
+
+    copula:
+      description: A copula distribution
+      type: object
+      properties:
+        copula_type:
+          type: string
+          enum:
+            - gaussian
+            - archimedean
+            - frank
+            - clayton
+            - gumbel
+
   wind:
     type: object
     properties:
       direction:
         id: "wind_direction"
         type: number
-        description: The wind direction
+        description: The wind direction in degree, with North as the 0.
         units: deg
         minimum: 0.0
         maximum: 360.0
 
       speed:
-        type: number
-        description: A wind speed
-        minimum: 0.0
-        maximum: 100.0
-        units: m/s
+        anyOf:
+          - oneOf:
+            - type: number
+              description: A wind speed
+            - $ref: "#/definitions/distributions/weibull"
+          - minimum: 0.0
+            maximum: 100.0
+            units: m/s
 
       ti:
         type: number
@@ -253,7 +333,7 @@ definitions:
         minimum: 0.0
         maximum: 1.0
 
-  frequency:
+  probability:
     type: number
     description: probability of an event to happen
     minimum: 0.0

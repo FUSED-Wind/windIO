@@ -24,10 +24,10 @@ class TestWindTurbine:
             self.validate(yml)
         assert message in str(valerror.value)
 
-    def validation_min(self, yml):
+    def validation_error_min(self, yml):
         self.validatation_error(yml, "is less than the minimum of")
 
-    def validation_max(self, yml):
+    def validation_error_max(self, yml):
         self.validatation_error(yml, "is greater than the maximum of")
 
     def validation_error_type(self, yml, type_var=None):
@@ -40,9 +40,9 @@ class TestWindTurbine:
     def validation_number_bracket(self, base, valid, lt_min=None, gt_max=None):
         self.validate("%s: %f"%(base, valid))
         if lt_min:
-            self.validation_min("%s: %f"%(base, lt_min))
+            self.validation_error_min("%s: %f"%(base, lt_min))
         if gt_max:
-            self.validation_max("%s: %f"%(base, gt_max))
+            self.validation_error_max("%s: %f"%(base, gt_max))
 
     def test_name(self):
         # Test with a correct name
@@ -85,14 +85,14 @@ class TestWindTurbine:
                 - [15.0, 2000.0]
             """)
         # Test that the items min/max works
-        self.validation_min("""
+        self.validation_error_min("""
             power_curve:
                 - [-4.0, 25.0]
                 - [10.0, 1000.0]
                 - [15.0, 2000.0]
             """)
 
-        self.validation_min("""
+        self.validation_error_min("""
             power_curve:
                 - [4.0, -25.0]
                 - [10.0, 1000.0]
@@ -123,21 +123,21 @@ class TestWindTurbine:
                 - [15.0, 0.1]
             """)
         # Test that the items min/max works
-        self.validation_min("""
+        self.validation_error_min("""
             c_t_curve:
                 - [-4.0, 0.8]
                 - [10.0, 0.1]
                 - [15.0, 0.05]
             """)
 
-        self.validation_min("""
+        self.validation_error_min("""
             c_t_curve:
                 - [4.0, -0.8]
                 - [10.0, 0.1]
                 - [15.0, 0.05]
             """)
 
-        self.validation_max("""
+        self.validation_error_max("""
             c_t_curve:
                 - [4.0, 1.8]
                 - [10.0, 0.1]
@@ -159,3 +159,39 @@ class TestWindTurbine:
                 - [10.0, 0.2, 100.0]
                 - [15.0, 0.1, 2000.0]
             """, 'Additional items are not allowed')
+
+    def test_c_t(self):
+        self.validation_number_bracket('c_t', 0.89, -0.1, 1.3)
+
+    def test_c_t_idle(self):
+        self.validation_number_bracket('c_t_idle', 0.1, -0.1, 1.3)
+
+    def test_c_p(self):
+        self.validation_number_bracket('c_p', 0.49, -0.1, 0.7)
+
+    def test_thrust(self):
+        self.validation_number_bracket('thrust', 49.0, -0.1)
+
+    def test_power(self):
+        self.validation_number_bracket('power', 49, -0.1, 1.0E6)
+
+    def test_hub(self):
+        self.validate("""
+            hub:
+                height: 80.0
+                wind_speed: 13.0
+            """)
+            
+        # Test an error in type
+        self.validation_error_type("""
+            hub:
+                height: 80.0
+                wind_speed: a13.0
+            """, 'number')
+
+        # Test minimum error
+        self.validation_error_min("""
+            hub:
+                height: 80.0
+                wind_speed: -13.0
+            """)
