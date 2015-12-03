@@ -1,36 +1,36 @@
 $schema: "http://json-schema.org/draft-04/schema#"
 title: windIO file
 description: A file used as input or output of a wind energy model
-type: object
-
 ## The windIO file properties
-properties:
-  transformers:
-    type: array
-    items:
-      $ref: "#/definitions/transformer"
-
-  metmasts:
-    type: array
-    items:
-      $ref: "#/definitions/metmast"
-
-  layout:
-    type: array
-    items:
-      $ref: "#/definitions/wind_turbine"
-
-  turbine_types:
-    type: array
-    items:
-      $ref: "#/definitions/wind_turbine"
-
-  turbine:
-    $ref: "#/definitions/wind_turbine"
-
+allOf:
+  - $ref: "#/definitions/wind_turbine"
+  - $ref: "#/definitions/wind_plant"
 
 # Some base schema definitions
 definitions:
+  wind_plant:
+    type: object
+    properties:
+      transformers:
+        type: array
+        items:
+          $ref: "#/definitions/transformer"
+
+      metmasts:
+        type: array
+        items:
+          $ref: "#/definitions/metmast"
+
+      layout:
+        type: array
+        items:
+          $ref: "#/definitions/wind_turbine"
+
+      turbine_types:
+        type: array
+        items:
+          $ref: "#/definitions/wind_turbine"
+
   wind_turbine:
     type: object
     description: An object describing a wind turbine
@@ -213,6 +213,7 @@ definitions:
           - $ref: "gaussian"
           - $ref: "KDE"
           - $ref: "GP"
+          - $ref: "copula"
       - min:
           type: number
           description: truncation of the distribution
@@ -231,7 +232,7 @@ definitions:
       items:
         - type: number
         - type: number
-        additionalItems: false
+      additionalItems: false
 
     lognormal:
       type: object
@@ -263,8 +264,9 @@ definitions:
           minimum: 0.0
 
     KDE:
-      description: | A Kernel Density Estimator representation of a distribution.
-                   | See http://scikit-learn.org/stable/modules/density.html
+      description: |
+        A Kernel Density Estimator representation of a distribution.
+        See http://scikit-learn.org/stable/modules/density.html
       type: object
       properties:
         kernel:
@@ -383,7 +385,8 @@ definitions:
         type: number
         description: The hub height
         units: m
-        expr_min: rotor:diameter / 2.0
+        expr_min: rotor_diameter / 2.0
+        minimum: 0.0
 
       wind_speed:
         type: number
@@ -428,215 +431,254 @@ definitions:
         minimum: 0.0
         expr: mass * cost_per_mass
 
-  steel:
-    extends: material
-    name: steel
-    density: 7.850e3
-    cost_per_mass: 100 # USD/kg
-
   component:
-    name:
-      type: string
-      description: the component name
+    type: object
+    properties:
+      name:
+        type: string
+        description: the component name
 
-    materials: [material] # Used if there are several materials
-    material: material # Used if there is only on material
+      materials:
+        type: array
+        items:
+          - $ref: "#/definitions/material"
+        description: When there are several materials
+
+      material:
+        $ref: "#/definitions/material"
 
     cost:
-      material:
-        type: number
-        description: The total cost per mass
-        expr: material:mass * material:cost_per_mass
-          #sum([m.mass * m.cost_per_mass for m in materials])
-        minimum: 0.0
+      type: object
+      properties:
+        material:
+          type: number
+          description: The total cost per mass
+          expr: material_mass * material_cost_per_mass
+            #sum([m.mass * m.cost_per_mass for m in materials])
+          minimum: 0.0
 
-      installation:
-        type: number
-        description: The installation cost of the component
-        minimum: 0.0
+        installation:
+          type: number
+          description: The installation cost of the component
+          minimum: 0.0
 
-      replacement:
-        type: number
-        description: The maintenance cost to replace the component
-        minimum: 0.0
+        replacement:
+          type: number
+          description: The maintenance cost to replace the component
+          minimum: 0.0
 
-      manufacturing:
-        type: number
-        description: The manufacturing cost of the component
-        minimum: 0.0
+        manufacturing:
+          type: number
+          description: The manufacturing cost of the component
+          minimum: 0.0
 
-      total:
-        type: number
-        description: The total cost per mass
-        expr: material + installation + manufacturing
-        minimum: 0.0
+        total:
+          type: number
+          description: The total cost per mass
+          expr: material + installation + manufacturing
+          minimum: 0.0
 
   blade:
-    extends: component
-    name: blade
+    anyOf:
+      - $ref: "#/definitions/component"
+      - properties:
+          length:
+            type: number
+            description: The blade length
+            units: m
+            minimum: 0.0
 
-    length:
-      type: number
-      description: The blade length
-      units: m
-      minimum: 0.0
+  gearbox:
+    anyOf:
+      - $ref: "#/definitions/component"
+      - properties:
+          losses:
+            type: number
+            description: the percentage of losses in the geabox
+            minimum: 0.0
+            maximum: 1.0
+
 
   generator:
-    extends: component
-    name: generator
-
+    anyOf:
+      - $ref: "#/definitions/component"
+      - properties:
+          electrical_power:
+            type: number
+            description: The electrical power
+            units: kW
+          losses:
+            type: number
+            description: the percentage of losses in the generator
+            minimum: 0.0
+            maximum: 1.0
 
   tower:
-    base_diameter:
-      type: number
-      description: The tower base diameter
-      units: m
-      minimum: 0.0
+    anyOf:
+      - $ref: "#/definitions/component"
+      - properties:
+          base_diameter:
+            type: number
+            description: The tower base diameter
+            units: m
+            minimum: 0.0
 
-    top_diameter:
-      type: number
-      description: The tower top diameter
-      units: m
-      minimum: 0.0
+          top_diameter:
+            type: number
+            description: The tower top diameter
+            units: m
+            minimum: 0.0
 
-    wall_thickness:
-      description: Tower wall thickness
-      units: m
+          wall_thickness:
+            description: Tower wall thickness
+            units: m
 
-    bottom_moment_max:
-      type: number
-      description: Maximum tower bottom moment
-      units: kN*m
+          bottom_moment_max:
+            type: number
+            description: Maximum tower bottom moment
+            units: kN*m
 
-    bottom_moment_leq:
-      type: number
-      units: kN*m
-      description: Lifetime equivalent tower bottom moment
+          bottom_moment_leq:
+            type: number
+            units: kN*m
+            description: Lifetime equivalent tower bottom moment
 
-    stress_limit_extreme:
-      type: number
-      units: MPa
-      description: Tower ultimate strength
+          stress_limit_extreme:
+            type: number
+            units: MPa
+            description: Tower ultimate strength
 
-    stress_limit_fatigue:
-      type: number
-      units: MPa
-      description: Tower fatigue strength
+          stress_limit_fatigue:
+            type: number
+            units: MPa
+            description: Tower fatigue strength
 
-    safety_factor:
-      type: number
-      description: Tower loads safety factor
+          safety_factor:
+            type: number
+            description: Tower loads safety factor
 
-    wohler_exponent:
-      type: number
-      default: 4.0
-      description: Tower fatigue Wohler exponent
+          wohler_exponent:
+            type: number
+            default: 4.0
+            description: Tower fatigue Wohler exponent
 
-    lifetime_cycles:
-      type: number
-      description: Equivalent lifetime cycles
-      default: 1.e7
-
-    material: steel
-
-  thickness:
-    type: number
-    description: The thickness
-
+          lifetime_cycles:
+            type: number
+            description: Equivalent lifetime cycles
+            default: 1.e7
 
   blade:
-    thicknesses_sections:
-      type: [thicknesses]
+    type: object
+    anyOf:
+      - $ref: "#/definitions/component"
+      - properties:
+          thicknesses_sections:
+            type: array
+            items:
+              $ref: "#/definitions/blade/properties/thicknesses"
 
-    thicknesses:
-      type: ndarray([radius, thickness])
+          thicknesses:
+            type: array
+            description: ndarray([radius, thickness])
+            items:
+              - type: array
+                items:
+                  - type: number
+                    description: radius
+                    units: m
+                    minimum: 0.0
+              - type: array
+                items:
+                  - type: number
+                    description: thickness
+                    units: m
+                    minimum: 0.0
+            additionalItems: false
 
-    lifetime_cycles:
-      type: number
-      default: 1.e7
-      description: Equivalent lifetime cycles
+          lifetime_cycles:
+            type: number
+            default: 1.e7
+            description: Equivalent lifetime cycles
 
-    wohler_exponent_flap:
-      type: number
-      description: Blade flap fatigue Wohler exponent
+          wohler_exponent_flap:
+            type: number
+            description: Blade flap fatigue Wohler exponent
 
-    rotor_diameter:
-      type: number
-      units: m
-      description: Rotor diameter
+          rotor_diameter:
+            type: number
+            units: m
+            description: Rotor diameter
 
-    MaxChordrR:
-      type: number
-      units: m
-      description: Spanwise position of maximum chord
+          MaxChordrR:
+            type: number
+            units: m
+            description: Spanwise position of maximum chord
 
-    root_flap_max:
-      type: number
-      units: kN*m
-      description: Max blade root flapwise moment
+          root_flap_max:
+            type: number
+            units: kN*m
+            description: Max blade root flapwise moment
 
-    root_edge_max:
-      type: number
-      units: kN*m
-      description: Max blade root edgewise moment
+          root_edge_max:
+            type: number
+            units: kN*m
+            description: Max blade root edgewise moment
 
-    root_flap_leq:
-      type: number
-      units: kN*m
-      description: Blade root flapwise lifetime eq. moment
+          root_flap_leq:
+            type: number
+            units: kN*m
+            description: Blade root flapwise lifetime eq. moment
 
-    root_edge_leq:
-      type: number
-      units: kN*m
-      description: Blade root edgewise lifetime eq. moment
+          root_edge_leq:
+            type: number
+            units: kN*m
+            description: Blade root edgewise lifetime eq. moment
 
-    tif_root_flap_ext:
-      type: number
-      default: 1.0
-      description: Technology improvement factor flap extreme
+          tif_root_flap_ext:
+            type: number
+            default: 1.0
+            description: Technology improvement factor flap extreme
 
-    tif_root_edge_ext:
-      type: number
-      default: 1.0
-      description: Technology improvement factor edge extreme
+          tif_root_edge_ext:
+            type: number
+            default: 1.0
+            description: Technology improvement factor edge extreme
 
-    tif_root_flap_fat:
-      type: number
-      default: 1.0
-      description: Technology improvement factor flap LEQ
+          tif_root_flap_fat:
+            type: number
+            default: 1.0
+            description: Technology improvement factor flap LEQ
 
-    sc_frac_flap:
-      type: number
-      description: spar cap fraction of chord
+          sc_frac_flap:
+            type: number
+            description: spar cap fraction of chord
 
-    sc_frac_edge:
-      type: number
-      description: spar cap fraction of thickness
+          sc_frac_edge:
+            type: number
+            description: spar cap fraction of thickness
 
-    safety_factor:
-      type: number
-      description: Blade loads safety factor
+          safety_factor:
+            type: number
+            description: Blade loads safety factor
 
-    stress_limit_extreme:
-      type: number
-      units: MPa
-      description: Blade ultimate strength
+          stress_limit_extreme:
+            type: number
+            units: MPa
+            description: Blade ultimate strength
 
-    stress_limit_fatigue:
-      type: number
-      units: MPa
-      description: Blade fatigue strength
+          stress_limit_fatigue:
+            type: number
+            units: MPa
+            description: Blade fatigue strength
 
-    add_weight_factor_blade:
-      type: number
-      description: Additional weight factor for blade shell
+          add_weight_factor_blade:
+            type: number
+            description: Additional weight factor for blade shell
 
-    root_diameter:
-      type: number
-      units :  m
-      desc :  blade root chord # 07/09/2015 added for HubSE model
-
-    material: material
+          root_diameter:
+            type: number
+            units :  m
+            desc :  blade root chord # 07/09/2015 added for HubSE model
 
   radius:
     type: number
@@ -701,19 +743,25 @@ definitions:
             units: m
 
   vane:
-    wind_direction: wind:direction
-    extends: sensor
+    anyOf:
+      - $ref: "#/definitions/sensor"
+      - properties:
+          wind_direction:
+            $ref: "#/definitions/wind/properties/direction"
 
   wind_speed_sensor:
-    wind_speed: wind:speed
-    extends: sensor
+    anyOf:
+      - $ref: "#/definitions/sensor"
+      - properties:
+          wind_speed:
+            $ref: "#/definitions/wind/properties/speed"
 
   anemometer:
-    $ref: wind_speed_sensor
+    $ref: "#/definitions/wind_speed_sensor"
   sonic:
-    $ref: wind_speed_sensor
+    $ref: "#/definitions/wind_speed_sensor"
   lidar:
-    $ref: wind_speed_sensor
+    $ref: "#/definitions/wind_speed_sensor"
 
   metmast:
     type: object

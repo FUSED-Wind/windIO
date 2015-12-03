@@ -1,22 +1,18 @@
-turbines:
-  t1:
-    name: T1
+layout:
+  - name: T1
     position: [0.0, 0.0]
     type: Type1
-  t2:
-    name: T2
+  - name: T2
     position: [1000.0, 0.0]
     type: Type1
-  t3:
-    name: T3
+  - name: T3
     position: [1000.0, 1000.0]
     type: Type1
-  t4:
-    name: T4
+  - name: T4
     position: [0.0, 1000.0]
     type: Type1
 turbine_types:
-  Type1:
+  -  name: Type1
      hub_height: 65.0
      rotor_diameter: 92.6
      rated_power: 2300.0

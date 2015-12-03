@@ -8,8 +8,8 @@ from jsonschema import validate, ValidationError
 # The test directory
 current_dir = os.path.dirname(__file__)
 
-class TestWindTurbine:
-    base = "turbine: \n  "
+class TestWindTurbineSchema:
+    base = ""
 
     def setup_method(self, method):
         schema_file = current_dir + '/../variables.yml'

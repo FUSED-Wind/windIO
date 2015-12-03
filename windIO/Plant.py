@@ -11,11 +11,10 @@ class WTLayout(object):
         self.filename = filename
         with open(self.filename, 'r') as f:
             data = yaml.load(f)
-        self.wt_names = list(data['turbines'].keys())
-        self.wt_names.sort()
+        self.wt_names = list(wt['name'] for wt in data['layout'])
         self.data = data
         # Check that the data is correctly organized
-        self.check_structure(data)
+        #self.check_structure(data)
 
     def __getitem__(self, a):
         return self.data[a]
@@ -25,7 +24,7 @@ class WTLayout(object):
 
     @property
     def wt_list(self):
-        return [self.data['turbines'][wtn] for wtn in self.wt_names]
+        return self.data['layout']
 
     @property
     def positions(self):
