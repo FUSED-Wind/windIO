@@ -166,6 +166,7 @@ definitions:
     oneOf:
       - $ref: "#/definitions/weibull_wind_rose"
       - $ref: "#/definitions/probability_wind_rose"
+      - $ref: "#/definitions/weibull_wind_and_turbulence_rose"
 
   weibull_wind_rose:
     description: A wind rose descrived as an array of weibull distributions
@@ -177,6 +178,19 @@ definitions:
         - $ref: "#/definitions/probability"
         - $ref: "#/definitions/distribution/weibull/properties/A"
         - $ref: "#/definitions/distribution/weibull/properties/k"
+
+  weibull_wind_and_turbulence_rose:
+    description: A wind rose descrived as an array of weibull distributions
+    type: array #ndarray([[wind:direction], [probability], [distribution:weibull:A], [distribution:weibull:k]])
+    items:
+      type: array
+      items:
+        - $ref: "#/definitions/wind/properties/direction"
+        - $ref: "#/definitions/probability"
+        - $ref: "#/definitions/distribution/weibull/properties/A"
+        - $ref: "#/definitions/distribution/weibull/properties/k"
+        - $ref: "#/definitions/wind/ti"        
+
 
   probability_wind_rose:
     type: object
@@ -783,3 +797,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/sensor"
+
+      wind_rose:
+        $ref: "#/definitions/wind_rose"

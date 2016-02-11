@@ -35,6 +35,13 @@ class TestWindTurbineLayout:
                       [0.0, 1000.0],
                       ]))
 
+
+    def test_tree_structure(self):
+        assert self.wt_layout.T1.name == 'T1'
+        assert self.wt_layout[0].name == 'T1'
+        assert self.wt_layout.T1.rotor_diameter == self.wt_layout['turbine_types'][self.wt_layout.T1.turbine_type]['rotor_diameter']
+
+
     # def test_check_base_structure(self):
     #     data = self.wt_layout.data
     #     data['wrong_key'] = ''

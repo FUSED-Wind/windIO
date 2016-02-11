@@ -5,6 +5,7 @@
 
 import yaml
 import numpy as np
+from .plot import *
 
 class WTLayout(object):
     def __init__(self, filename):
@@ -71,3 +72,46 @@ class WTLayout(object):
             for k2 in v.keys():
                 if k2 not in type_base:
                     raise KeyError('key: {0} not recognized. It should be one of those keys {1}'.format(k2, type_base))
+
+    def plot_layout(self, fig_size=(1000, 500), data={}, layout={}, **kwargs):
+        """Plot the wind turbine layout of a wind farm
+
+        Parameters
+        ----------
+        fig_size: tuple, optional
+            The figure size in pixels
+        data: dict, optional
+            Additional data inputs
+        layout: dict, optional
+            Additional layout inputs
+
+        Returns
+        -------
+        h: Plotly instance
+            The instance of the Plot.ly plot
+        """
+        return plot_layout(self, fig_size, data, layout, **kwargs)
+
+    def plot_location(self, UTM, buffers=(16,8), fig_size=(1000, 500), data={}, layout={}, **kwargs):
+        """Plot the wind farm location on a map
+
+        Parameters
+        ----------
+        UTM: tuple
+            The UTM region number and letter e.g.: UTM=(32, 'U')
+        buffers: tuple, optional
+            The longitude and latitude buffer region to plot around the wind farm location
+        fig_size: tuple, optional
+            The figure size in pixels
+        data: dict, optional
+            Additional data inputs
+        layout: dict, optional
+            Additional layout inputs
+
+        Returns
+        -------
+        h: Plotly instance
+            The instance of the Plot.ly plot
+
+        """
+        return plot_location(self.positions, UTM, buffers, fig_size, data, layout, **kwargs)

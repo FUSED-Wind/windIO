@@ -1,6 +1,10 @@
-# Requirements to test the package
+ # Requirements to test the package
 # pip install -r test_requirements.txt
 #
 tox
 pytest
 pyyaml
+utm
+numpy
+scipy
+plotly
