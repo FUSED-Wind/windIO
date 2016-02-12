@@ -12,16 +12,42 @@ class WTLayout(object):
         self.filename = filename
         with open(self.filename, 'r') as f:
             data = yaml.load(f)
-        self.wt_names = list(wt['name'] for wt in data['layout'])
         self.data = data
+        self.wt_names = list(wt['name'] for wt in data['layout'])
+        self._name_map = {n:(k, i)
+            for k in data.keys()
+                for i,n in enumerate([ob['name'] for ob in data[k]])}
         # Check that the data is correctly organized
         #self.check_structure(data)
 
     def __getitem__(self, a):
-        return self.data[a]
+        if a in self.data:
+            return self.data[a]
+        elif a in self._name_map:
+            return self.data[self._name_map[a][0]][self._name_map[a][1]]
 
-    def __setitem__(self, a, b):
-        self.data[a] = b
+    #def __setitem__(self, a, b):
+    #    self.data[a] = b
+
+    def __getattr__(self, a):
+        """Give access to a list of the properties of the turbine
+
+        Parameters
+        ----------
+        key: str
+            The parameter to return
+
+        Returns
+        -------
+        parameters: list
+            The parameter list of the turbines
+        """
+        if a in self.data:
+            return self.data[a]
+        elif a in self._name_map:
+            return self.data[self._name_map[a][0]][self._name_map[a][1]]
+        else:
+            return self.__getattribute__(a)
 
     @property
     def wt_list(self):
