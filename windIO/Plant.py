@@ -16,7 +16,9 @@ class WTLayout(object):
         self.wt_names = list(wt['name'] for wt in data['layout'])
         self._name_map = {n:(k, i)
             for k in data.keys()
-                for i,n in enumerate([ob['name'] for ob in data[k]])}
+                if isinstance(data[k], list)
+                    for i,n in enumerate([ob['name'] for ob in data[k]])}
+        self.name = self.plant_data['name']
         # Check that the data is correctly organized
         #self.check_structure(data)
 
@@ -116,9 +118,10 @@ class WTLayout(object):
         h: Plotly instance
             The instance of the Plot.ly plot
         """
+        layout = {'title': 'Layout of {}'.format(self.name)}
         return plot_layout(self, fig_size, data, layout, **kwargs)
 
-    def plot_location(self, UTM, buffers=(16,8), fig_size=(1000, 500), data={}, layout={}, **kwargs):
+    def plot_location(self, buffers=(16,8), fig_size=(1000, 500), data={}, layout={}, **kwargs):
         """Plot the wind farm location on a map
 
         Parameters
@@ -140,4 +143,7 @@ class WTLayout(object):
             The instance of the Plot.ly plot
 
         """
-        return plot_location(self.positions, UTM, buffers, fig_size, data, layout, **kwargs)
+        utm = self.plant_data['utm']
+        layout = {'title': 'Geographical location of {}'.format(self.name)}
+        return plot_location(self.positions, (utm['code'], utm['letter']),
+            buffers, fig_size, data, layout, **kwargs)

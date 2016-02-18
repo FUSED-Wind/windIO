@@ -86,7 +86,8 @@ def plot_layout(wtl, fig_size=(1000, 500), data={}, layout={}, **kwargs):
             'range': yr,
             'type': "linear",
             'autorange': True
-        }
+        },
+        'hovermode': 'closest'
     })
     h = iplot(Figure(data=[wt, mm, tp], layout=layout), **kwargs)
     return h
@@ -151,6 +152,7 @@ def plot_location(wt_positions, UTM, buffers=(16,8), fig_size=(1000, 500), data=
                 'dtick': 5
             }},
         'width': fig_size[0],
-        'height':  fig_size[1]})
+        'height':  fig_size[1],
+        'hovermode': 'closest'})
     h = iplot(Figure(data=[data], layout=layout, **kwargs))
     return h
