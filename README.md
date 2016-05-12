@@ -1,7 +1,7 @@
 # windIO
 A multi-language library to write inputs / output files
 
-# Motivation
+## Motivation
 Wind Energy software ecosystem is a mess. There are many different softwares and
 research models that are in competition, and introduced their own defined input and output files.
 The compatibility between one tool or another is completely left for at the
@@ -18,7 +18,7 @@ This library is also a core element of the FUSED-Wind framework, which offers a
 code-agnostic and model-agnostic ontology to formulate analysis and design workflows,
 and to connect models of different level of fidelities together.
 
-# Concept
+## Concept
 The library is using json-schema to enforce a taxonomy of how the files should be
 organized. That means that the files used in the library will be automatically
 checked to see if they fulfill the requirements of the schema. Both JSON and
@@ -39,7 +39,14 @@ in different languages.
 The library will eventually also build a documentation of the file schema.
 Additional explanations tutorials and examples will be presented in the library documentation and source code to help developers to design their tools around this library.
 
-# Running the tests
+## Dependencies
+* numpy
+* utm
+* pyyaml
+* jsonschema
+
+
+## Running the tests
 You can use [py.test](http://pytest.org/latest/):
 
 ```bash

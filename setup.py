@@ -11,5 +11,7 @@ setup(name='windIO',
       install_requires=[
         'pyyaml',
         'numpy',
+        'utm',
+        'jsonschema',
       ],
       zip_safe=False)
