@@ -1,6 +1,9 @@
-import plotly
-from plotly.graph_objs import *
-from plotly.offline import download_plotlyjs, iplot
+try:
+    import plotly
+    from plotly.graph_objs import *
+    from plotly.offline import download_plotlyjs, iplot
+except:
+    print('Plotly failed to be loaded')
 import numpy as np
 import utm
 
